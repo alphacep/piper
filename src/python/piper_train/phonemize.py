@@ -73,20 +73,34 @@ DEFAULT_PHONEME_ID_MAP: Dict[str, List[int]] = {
 from .ru_dictionary import convert
 import re
 
+
+wdic = {}
+for line in open("db/dictionary"):
+   items = line.split()
+   if items[0] not in wdic:
+       wdic[items[0]] = " ".join(items[1:])
+
 def phonemize(text: str, phonemizer: Phonemizer) -> List[str]:
 
     text = re.sub("—", "-", text)
-    text = re.sub("([!'(),-.:;?])", r' \1 ', text)
+    text = re.sub("\"", " ", text)
+    text = re.sub("([!'(),.:;?])", r' \1 ', text)
 
     phonemes = []
     for word in text.split():
-        if re.match("[!'(),-.:;?]", word):
+        if re.match("[!'(),.:;?]", word) or word == '-':
             phonemes.append(word)
             continue
 
         word = word.lower()
         if len(phonemes) > 0: phonemes.append(' ')
-        phonemes.extend(convert(word).split())
+
+
+        if word in wdic:
+            phonemes.extend(wdic[word].split())
+        else:
+            print ("!!!!", word)
+            phonemes.extend(convert(word).split())
 
     print (text, phonemes)
 

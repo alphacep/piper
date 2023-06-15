@@ -49,7 +49,10 @@ def main():
 
         text = torch.LongTensor(phoneme_ids).unsqueeze(0)
         text_lengths = torch.LongTensor([len(phoneme_ids)])
+
+        # Noise scale, speed, duration noise scale
         scales = [0.667, 1.0, 0.8]
+
         sid = torch.LongTensor([speaker_id]) if speaker_id is not None else None
 
         start_time = time.perf_counter()
